@@ -4,7 +4,7 @@ void PacMan::add_bits_of_texture(sf::IntRect xxx){
     bits_of_texture.emplace_back(xxx);
 }
 
-void PacMan::ruch(const sf::Time &e,sf::RenderWindow &window){
+void PacMan::movement(const sf::Time &e,sf::RenderWindow &window){
 
     auto guy_bounds = getGlobalBounds();
 
@@ -38,30 +38,30 @@ void PacMan::ruch(const sf::Time &e,sf::RenderWindow &window){
         }
     }
     if(left==1){
-        v_x=-70;
-        v_y=0;
+        velociety_x=-70;
+        velociety_y=0;
     }if(right==1){
-        v_x=70;
-        v_y=0;
+        velociety_x=70;
+        velociety_y=0;
     }if(up==1){
-        v_x=0;
-        v_y=-70;
+        velociety_x=0;
+        velociety_y=-70;
     }if(down==1){
-        v_x=0;
-        v_y=70;
+        velociety_x=0;
+        velociety_y=70;
     }
         if(left==1||right==1||up==1||down==1){
             std::cout<<"left:"<<left<<std::endl<<"right:"<<right<<std::endl<<"up:"<<up<<std::endl<<"down:"<<down<<std::endl;
         }
-    move(v_x * e.asSeconds(), v_y * e.asSeconds());
+    move(velociety_x * e.asSeconds(), velociety_y * e.asSeconds());
 }
 
 
-void PacMan::animacja(const sf::Time &e){
+void PacMan::texture_animation(const sf::Time &e){
     auto b = getGlobalBounds();
     if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) == sf::Keyboard::isKeyPressed(sf::Keyboard::Right)== sf::Keyboard::isKeyPressed(sf::Keyboard::Up)== sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
             ){
-        time_animation = 0;
+        animation_time = 0;
         setScale(0.5, 0.5);
         setPosition(b.left, b.top);
     }else{
@@ -79,23 +79,23 @@ void PacMan::animacja(const sf::Time &e){
         }
 
 
-        if(time_animation < 2.0){
-            time_animation += 18 * e.asSeconds();
+        if(animation_time < 2.0){
+            animation_time += 18 * e.asSeconds();
         }else{
-            time_animation = 0.0;
+            animation_time = 0.0;
         }
-        if(time_animation < 0.5){
+        if(animation_time < 0.5){
             setTextureRect(bits_of_texture[4]);
         }
     }
 }
 
-void PacMan::kolizja_ze_scianiami(std::vector<std::unique_ptr<Walls_and_balls>> &v, const sf::Time &e){
+void PacMan::collision_with_walls(std::vector<std::unique_ptr<Walls_and_balls>> &v, const sf::Time &e){
     grounded = false;
     auto playerBounds = getGlobalBounds();
     auto playerBoundsNext = getGlobalBounds();
-    playerBoundsNext.left = getPosition().x + v_x * e.asSeconds();
-    playerBoundsNext.top = getPosition().y + v_y * e.asSeconds();
+    playerBoundsNext.left = getPosition().x + velociety_x * e.asSeconds();
+    playerBoundsNext.top = getPosition().y + velociety_y * e.asSeconds();
 
     for (auto& wall : v) {
 
@@ -110,7 +110,7 @@ void PacMan::kolizja_ze_scianiami(std::vector<std::unique_ptr<Walls_and_balls>> 
                 && playerBounds.left + playerBounds.width > wallBounds.left
                 )
             {
-                v_y = 0;
+                velociety_y = 0;
                 setPosition(playerBounds.left, wallBounds.top - playerBounds.height);
                 grounded = true;
             }
@@ -122,7 +122,7 @@ void PacMan::kolizja_ze_scianiami(std::vector<std::unique_ptr<Walls_and_balls>> 
                 && playerBounds.left + playerBounds.width > wallBounds.left
                 )
             {
-                v_y = 0;
+                velociety_y = 0;
                 setPosition(playerBounds.left, wallBounds.top + wallBounds.height);
             }
 
@@ -133,7 +133,7 @@ void PacMan::kolizja_ze_scianiami(std::vector<std::unique_ptr<Walls_and_balls>> 
                 && playerBounds.top + playerBounds.height > wallBounds.top
                 )
             {
-                v_x = 0;
+                velociety_x = 0;
                 setPosition(wallBounds.left - playerBounds.width, playerBounds.top);
             }
 
@@ -144,38 +144,38 @@ void PacMan::kolizja_ze_scianiami(std::vector<std::unique_ptr<Walls_and_balls>> 
                 && playerBounds.top + playerBounds.height > wallBounds.top
                 )
             {
-                v_x = 0;
+                velociety_x = 0;
                 setPosition(wallBounds.left + wallBounds.width, playerBounds.top);
             }
         }
 
               if(playerBounds.top+playerBounds.height>600)
               {
-                 v_y = 0;
+                 velociety_y = 0;
                  setPosition(playerBounds.left, 600 - playerBounds.height);
                  grounded=true;
 
               }
     }
-    move(v_x * e.asSeconds(), v_y * e.asSeconds());
+    move(velociety_x * e.asSeconds(), velociety_y * e.asSeconds());
 }
 
 
-void PacMan::kolizja_z_duzymi_kulkami(const sf::Time &e, std::vector<std::unique_ptr<Walls_and_balls>> &v, const std::vector<std::unique_ptr<Characters>> &v_ghosts){
+void PacMan::collision_with_big_balls(const sf::Time &e, std::vector<std::unique_ptr<Walls_and_balls>> &v, const std::vector<std::unique_ptr<Characters>> &v_ghosts){
     for(int i=0; i<v.size(); i++){
         auto kulka =v[i]->getGlobalBounds();
         if(getGlobalBounds().intersects(kulka)){
             v.erase(v.begin()+i);//znika
-            punkty+=100;
-            kolizja_z_duza_kulka_=1;
+            points+=100;
+            collision_with_big_ball_=1;
         }
-        if(kolizja_z_duza_kulka_==1){
+        if(collision_with_big_ball_==1){
             std::cout<<"kolizja";
-            if(czas_kolizji_z_duza_kulka_ < 10.0){
-                czas_kolizji_z_duza_kulka_ += 10 * e.asSeconds();
+            if(time_of_collision_with_big_ball_ < 10.0){
+                time_of_collision_with_big_ball_ += 10 * e.asSeconds();
             }else{
-                czas_kolizji_z_duza_kulka_ = 0.0;
-                kolizja_z_duza_kulka_ = 0;
+                time_of_collision_with_big_ball_ = 0.0;
+                collision_with_big_ball_ = 0;
             }
             //zmiana tekstury duchów
             for(int i=0; i<v_ghosts.size(); i++){
@@ -185,19 +185,19 @@ void PacMan::kolizja_z_duzymi_kulkami(const sf::Time &e, std::vector<std::unique
     }
 }
 
-void PacMan::kolizja_z_malymi_kulkami(std::vector<std::unique_ptr<Walls_and_balls>> &v){
+void PacMan::collision_with_small_balls(std::vector<std::unique_ptr<Walls_and_balls>> &v){
     for(int i=0; i<v.size(); i++){
         auto kulka =v[i]->getGlobalBounds();
         if(getGlobalBounds().intersects(kulka)){//jeżeni kolizja z postacią
             v.erase(v.begin()+i);//znika
-            punkty+=10;
+            points+=10;
         }
     }
 }
 
 
 
-void kolizja_z_duchami(std::vector<std::unique_ptr<Characters>> &v){
+void collision_with_ghosts(std::vector<std::unique_ptr<Characters>> &v){
 
 }
 
