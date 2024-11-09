@@ -12,7 +12,7 @@ int main() {
     if(!wall.loadFromFile("textures/wall.png")) { return 1; }
 
     //PACMAN
-    PacMan pacMan(textures,sf::Vector2f(0,50),sf::IntRect(14,54,49,54),"pacMan");
+    PacMan pacMan(textures,sf::Vector2f(323,270),sf::IntRect(14,54,49,54),"pacMan");
 
     //DODAWANIE Duchów DO WEKTORA
     std::vector<std::unique_ptr<Characters>> vector_of_ghosts;

@@ -7,7 +7,7 @@
 
 
 class PacMan : public Characters{
-    float animation_time;
+    float animation_time=0;
     int points=0;
     bool collision_with_big_ball_=0;
     float time_of_collision_with_big_ball_;

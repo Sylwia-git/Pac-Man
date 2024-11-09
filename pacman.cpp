@@ -38,55 +38,46 @@ void PacMan::movement(const sf::Time &e,sf::RenderWindow &window){
         }
     }
     if(left==1){
-        velociety_x=-70;
+        velociety_x=-50;
         velociety_y=0;
     }if(right==1){
-        velociety_x=70;
+        velociety_x=50;
         velociety_y=0;
     }if(up==1){
         velociety_x=0;
-        velociety_y=-70;
+        velociety_y=-50;
     }if(down==1){
         velociety_x=0;
-        velociety_y=70;
+        velociety_y=50;
     }
-        if(left==1||right==1||up==1||down==1){
-            std::cout<<"left:"<<left<<std::endl<<"right:"<<right<<std::endl<<"up:"<<up<<std::endl<<"down:"<<down<<std::endl;
-        }
     move(velociety_x * e.asSeconds(), velociety_y * e.asSeconds());
 }
 
-
 void PacMan::texture_animation(const sf::Time &e){
     auto b = getGlobalBounds();
-    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Left) == sf::Keyboard::isKeyPressed(sf::Keyboard::Right)== sf::Keyboard::isKeyPressed(sf::Keyboard::Up)== sf::Keyboard::isKeyPressed(sf::Keyboard::Down)
-            ){
-        animation_time = 0;
-        setScale(0.5, 0.5);
-        setPosition(b.left, b.top);
+    setScale(0.45, 0.45);
+    setPosition(b.left, b.top);
+
+    if(right==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+        setTextureRect(bits_of_texture[3]);
+    }
+    else if(left==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
+        setTextureRect(bits_of_texture[2]);
+    }
+    else if(up==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+        setTextureRect(bits_of_texture[0]);
+    }
+    else if(down==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+        setTextureRect(bits_of_texture[1]);
+    }
+
+    if(animation_time < 2.5){
+        animation_time += 18 * e.asSeconds();
     }else{
-        if(right==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
-            setTextureRect(bits_of_texture[3]);
-        }
-        else if(left==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Left)){
-            setTextureRect(bits_of_texture[2]);
-        }
-        else if(up==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
-            setTextureRect(bits_of_texture[0]);
-        }
-        else if(down==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
-            setTextureRect(bits_of_texture[1]);
-        }
-
-
-        if(animation_time < 2.0){
-            animation_time += 18 * e.asSeconds();
-        }else{
-            animation_time = 0.0;
-        }
-        if(animation_time < 0.5){
-            setTextureRect(bits_of_texture[4]);
-        }
+        animation_time = 0.0;
+    }
+    if(animation_time < 0.7){
+        setTextureRect(bits_of_texture[4]);
     }
 }
 
