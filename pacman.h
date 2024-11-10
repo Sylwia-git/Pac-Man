@@ -8,14 +8,14 @@
 
 class PacMan : public Characters{
     float animation_time=0;
+    float time_of_collision_with_big_ball_=0;
     int points=0;
     bool collision_with_big_ball_=0;
-    float time_of_collision_with_big_ball_;
     bool grounded = false;
     bool left=0 ,right=0, up=0, down=0;
 public:
-    float velociety_x;
-    float velociety_y;
+    float velociety_x=0;
+    float velociety_y=0;
     PacMan(const sf::Texture &texture, const sf::Vector2f &position, const sf::IntRect &rectangle, const std::string &typ) : Characters(texture,position,rectangle,typ){}
     void add_bits_of_texture(sf::IntRect xxx);
     void movement(const sf::Time &e,sf::RenderWindow &window);

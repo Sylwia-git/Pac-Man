@@ -11,10 +11,10 @@ int main() {
     sf::Texture wall;
     if(!wall.loadFromFile("textures/wall.png")) { return 1; }
 
-    //PACMAN
-    PacMan pacMan(textures,sf::Vector2f(323,270),sf::IntRect(14,54,49,54),"pacMan");
+    //OBIEKT PacMana
+    PacMan pacMan(textures,sf::Vector2f(323,263),sf::IntRect(14,54,49,54),"pacMan");
 
-    //DODAWANIE Duchów DO WEKTORA
+    //DODAWANIE DUCHÓW DO WEKTORA
     std::vector<std::unique_ptr<Characters>> vector_of_ghosts;
     vector_of_ghosts.emplace_back(std::make_unique<Ghosts>(textures,sf::Vector2f(292,141),sf::IntRect(323,51,55,55),"Red"));
     vector_of_ghosts.emplace_back(std::make_unique<Ghosts>(textures,sf::Vector2f(312,141),sf::IntRect(143,51,55,55),"Orange"));
@@ -81,6 +81,8 @@ int main() {
     vector_of_walls.emplace_back(std::make_unique<Walls_and_balls>(wall,sf::Vector2f(410,230),sf::IntRect(0,0,30,60)));
     vector_of_walls.emplace_back(std::make_unique<Walls_and_balls>(wall,sf::Vector2f(530,230),sf::IntRect(0,0,30,30)));
 
+
+
     //WEKTOR MAŁYCH KULEK
     std::vector<std::unique_ptr<Walls_and_balls>> vector_of_small_balls;
     for(int i=0;i<7;i++){
@@ -98,7 +100,6 @@ int main() {
     vector_of_big_balls.emplace_back(std::make_unique<Walls_and_balls>(textures,sf::Vector2f(-50,-50),sf::IntRect(274,342,26,26),sf::Vector2f(0.5,0.5)));
 
 
-
     while (window.isOpen()) {
         sf::Event event;
         while (window.pollEvent(event)) {
@@ -113,14 +114,15 @@ int main() {
         }
         pacMan.movement(elapsed,window);
         pacMan.texture_animation(elapsed);
-        //PacMan *pacMan = dynamic_cast<PacMan *>(vector_of_ghosts[0].get());
+          //PacMan *pacMan = dynamic_cast<PacMan *>(vector_of_ghosts[0].get());
         pacMan.collision_with_big_balls(elapsed, vector_of_big_balls, vector_of_ghosts);
         pacMan.collision_with_small_balls(vector_of_small_balls);
-        //pacMan.kolizja_z_duchami(vector_of_ghosts);
+          //pacMan.kolizja_z_duchami(vector_of_ghosts);
         pacMan.collision_with_walls(vector_of_walls, elapsed);
 
-        window.clear(sf::Color (0,0,50));
 
+        window.clear(sf::Color (0,0,50));
+        window.draw(pacMan);
         for(auto &it : vector_of_small_balls){
             window.draw(*it);
         }
@@ -133,7 +135,7 @@ int main() {
         for(auto &it : vector_of_walls){
             window.draw(*it);
         }
-        window.draw(pacMan);
+
 
         window.display();
     }

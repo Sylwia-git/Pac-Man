@@ -15,21 +15,24 @@ void PacMan::movement(const sf::Time &e,sf::RenderWindow &window){
             up=0;
             down=0;
         }
-    }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
         if(guy_bounds.left+guy_bounds.width < window.getSize().x){
             right=1;
             left=0;
             up=0;
             down=0;
         }
-    }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Up)){
         if(guy_bounds.top> 0){
             up=1;
             left=0;
             right=0;
             down=0;
         }
-    }else if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
+    }
+    if(sf::Keyboard::isKeyPressed(sf::Keyboard::Down)){
         if(guy_bounds.top+guy_bounds.height < window.getSize().y){
             down=1;
             left=0;
@@ -37,16 +40,20 @@ void PacMan::movement(const sf::Time &e,sf::RenderWindow &window){
             up=0;
         }
     }
+
     if(left==1){
         velociety_x=-50;
         velociety_y=0;
-    }if(right==1){
+    }
+    if(right==1){
         velociety_x=50;
         velociety_y=0;
-    }if(up==1){
+    }
+    if(up==1){
         velociety_x=0;
         velociety_y=-50;
-    }if(down==1){
+    }
+    if(down==1){
         velociety_x=0;
         velociety_y=50;
     }
@@ -54,9 +61,7 @@ void PacMan::movement(const sf::Time &e,sf::RenderWindow &window){
 }
 
 void PacMan::texture_animation(const sf::Time &e){
-    auto b = getGlobalBounds();
     setScale(0.45, 0.45);
-    setPosition(b.left, b.top);
 
     if(right==1){//sf::Keyboard::isKeyPressed(sf::Keyboard::Right)){
         setTextureRect(bits_of_texture[3]);
@@ -153,14 +158,28 @@ void PacMan::collision_with_walls(std::vector<std::unique_ptr<Walls_and_balls>> 
 
 
 void PacMan::collision_with_big_balls(const sf::Time &e, std::vector<std::unique_ptr<Walls_and_balls>> &v, const std::vector<std::unique_ptr<Characters>> &v_ghosts){
+    std::cout<<time_of_collision_with_big_ball_<<std::endl;
     for(int i=0; i<v.size(); i++){
-        auto kulka =v[i]->getGlobalBounds();
+        auto kulka = v[i]->getGlobalBounds();
         if(getGlobalBounds().intersects(kulka)){
             v.erase(v.begin()+i);//znika
             points+=100;
-            collision_with_big_ball_=1;
+            time_of_collision_with_big_ball_=1;
         }
-        if(collision_with_big_ball_==1){
+
+        if(time_of_collision_with_big_ball_ > 0){
+            time_of_collision_with_big_ball_ -= 0.1 * e.asSeconds();
+            collision_with_big_ball_=1;
+            for(int i=0; i<v_ghosts.size(); i++){
+                v_ghosts[i]->setTextureRect(v_ghosts[i]->bits_of_texture[5]);
+            }}else{
+            collision_with_big_ball_=0;
+            for(int i=0; i<v_ghosts.size(); i++){
+                v_ghosts[i]->setTextureRect(v_ghosts[i]->bits_of_texture[2]);
+            }
+        }
+
+        /*if(collision_with_big_ball_==1){
             std::cout<<"kolizja";
             if(time_of_collision_with_big_ball_ < 10.0){
                 time_of_collision_with_big_ball_ += 10 * e.asSeconds();
@@ -172,7 +191,7 @@ void PacMan::collision_with_big_balls(const sf::Time &e, std::vector<std::unique
             for(int i=0; i<v_ghosts.size(); i++){
                 v_ghosts[i]->setTextureRect(v_ghosts[i]->bits_of_texture[5]);
             }
-        }
+        }*/
     }
 }
 
